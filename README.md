@@ -1,4 +1,4 @@
-# BRANDNAME storefront
+# hahatypo storefront
 
 A static Astro storefront with a dependency-free Canvas 2D ASCII landing experience.
 Product content is stored in a Shopify-shaped JSON file so its source can be

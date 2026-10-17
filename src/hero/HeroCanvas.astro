@@ -23,8 +23,8 @@ import { HERO_CONFIG } from './config';
     character: string;
     baseCharacter: string;
     heat: number;
-    trailAge: number;
     shockAge: number;
+    shockDelay: number;
     threshold: number;
     noise: number;
     burnAt: number;
@@ -44,7 +44,7 @@ import { HERO_CONFIG } from './config';
   const cellHeight = HERO_CONFIG.cellHeight;
   const staticRamp = '@%#*+=:.';
   const glitchCharacters = '#%@&01/\\<>';
-  const trailRamp = '@#*+:.';
+  const rippleCharacters = '.:+*';
   const activeCells = new Set<number>();
   const burnOrder: number[] = [];
   const logoCellIndices: number[] = [];
@@ -63,7 +63,6 @@ import { HERO_CONFIG } from './config';
   let burnCursor = 0;
   let lastInput = performance.now();
   let lastPointer = { x: -100, y: -100 };
-  let lastTrailPoint: { x: number; y: number } | null = null;
   let resizeTimer = 0;
   let idleTimer = 0;
   let isBurning = false;
@@ -99,11 +98,18 @@ import { HERO_CONFIG } from './config';
     const offscreenContext = offscreen.getContext('2d', { willReadFrequently: true });
     if (!offscreenContext) throw new Error('The logo raster canvas could not be initialized.');
 
-    const fontSize = Math.min(88, width * 0.78 / Math.max(brand.length * 0.62, 1));
+    const fontSize = Math.min(
+      HERO_CONFIG.logoMaxFontSize,
+      width * HERO_CONFIG.logoWidthRatio / Math.max(brand.length * 0.62, 1),
+    );
     offscreenContext.font = `500 ${fontSize}px "IBM Plex Mono", monospace`;
     offscreenContext.textAlign = 'center';
     offscreenContext.textBaseline = 'middle';
     offscreenContext.fillStyle = '#ffffff';
+    offscreenContext.strokeStyle = '#ffffff';
+    offscreenContext.lineWidth = HERO_CONFIG.logoStrokeWidth;
+    offscreenContext.lineJoin = 'round';
+    offscreenContext.strokeText(brand, width / 2, height / 2);
     offscreenContext.fillText(brand, width / 2, height / 2);
 
     const pixels = offscreenContext.getImageData(0, 0, offscreen.width, offscreen.height).data;
@@ -139,14 +145,14 @@ import { HERO_CONFIG } from './config';
           y,
           logo,
           character: logo
-            ? staticRamp[Math.min(staticRamp.length - 1, Math.floor((coverage / sampleCount) * staticRamp.length))]
+            ? staticRamp[Math.max(0, Math.floor((1 - coverage / sampleCount) * (staticRamp.length - 1)))]
             : '',
           baseCharacter: logo
-            ? staticRamp[Math.min(staticRamp.length - 1, Math.floor((coverage / sampleCount) * staticRamp.length))]
+            ? staticRamp[Math.max(0, Math.floor((1 - coverage / sampleCount) * (staticRamp.length - 1)))]
             : '',
           heat: 0,
-          trailAge: -1,
           shockAge: -1,
+          shockDelay: 0,
           threshold: 0,
           noise,
           burnAt: -1,
@@ -181,7 +187,7 @@ import { HERO_CONFIG } from './config';
     context.fillStyle = backgroundColor();
     context.fillRect(0, 0, width, height);
     cells.forEach((cell, index) => {
-      if (cell.logo) drawCell(index, cell.baseCharacter, dimColor());
+      if (cell.logo) drawCell(index, cell.baseCharacter, textColor());
     });
   }
 
@@ -222,7 +228,7 @@ import { HERO_CONFIG } from './config';
     if (character) {
       context.globalAlpha = opacity;
       context.fillStyle = color;
-      context.font = '14px "IBM Plex Mono", monospace';
+      context.font = `700 ${HERO_CONFIG.cellFontSize}px "IBM Plex Mono", monospace`;
       context.textBaseline = 'alphabetic';
       context.fillText(character, cell.x, cell.y + 12);
       context.globalAlpha = 1;
@@ -236,7 +242,7 @@ import { HERO_CONFIG } from './config';
     if (character) {
       context.globalAlpha = opacity;
       context.fillStyle = color;
-      context.font = '14px "IBM Plex Mono", monospace';
+      context.font = `700 ${HERO_CONFIG.cellFontSize}px "IBM Plex Mono", monospace`;
       context.textBaseline = 'alphabetic';
       context.fillText(character, cell.x, cell.y + 12);
       context.globalAlpha = 1;
@@ -268,41 +274,9 @@ import { HERO_CONFIG } from './config';
     requestPaint();
   }
 
-  function stampTrail(x: number, y: number) {
-    if (isReducedMotion || isBurning) return;
-    const cellX = Math.floor(x / cellWidth);
-    const cellY = Math.floor(y / cellHeight);
-    const index = cellY * columns + cellX;
-    const cell = cells[index];
-    if (cell && !cell.logo) {
-      cell.trailAge = 0;
-      cell.character = trailRamp[Math.floor(random() * trailRamp.length)];
-      markActive(index);
-    }
-    requestPaint();
-  }
-
-  function stampPath(x: number, y: number) {
-    if (!lastTrailPoint) {
-      stampTrail(x, y);
-      lastTrailPoint = { x, y };
-      return;
-    }
-    const distance = Math.hypot(x - lastTrailPoint.x, y - lastTrailPoint.y);
-    const steps = Math.max(1, Math.ceil(distance / 9));
-    for (let step = 1; step <= steps; step += 1) {
-      const fraction = step / steps;
-      stampTrail(
-        lastTrailPoint.x + (x - lastTrailPoint.x) * fraction,
-        lastTrailPoint.y + (y - lastTrailPoint.y) * fraction,
-      );
-    }
-    lastTrailPoint = { x, y };
-  }
-
   function applyShockwave(x: number, y: number) {
     if (isReducedMotion || isBurning) return;
-    const radius = 114;
+    const radius = HERO_CONFIG.rippleRadius;
     const firstColumn = Math.max(0, Math.floor((x - radius) / cellWidth));
     const lastColumn = Math.min(columns - 1, Math.floor((x + radius) / cellWidth));
     const firstRow = Math.max(0, Math.floor((y - radius) / cellHeight));
@@ -311,9 +285,11 @@ import { HERO_CONFIG } from './config';
       for (let column = firstColumn; column <= lastColumn; column += 1) {
         const index = row * columns + column;
         const cell = cells[index];
-        if (Math.hypot(cell.x + cellWidth / 2 - x, cell.y + cellHeight / 2 - y) < radius) {
+        const distance = Math.hypot(cell.x + cellWidth / 2 - x, cell.y + cellHeight / 2 - y);
+        if (!cell.logo && distance < radius) {
           cell.shockAge = 0;
-          cell.character = glitchCharacters[Math.floor(random() * glitchCharacters.length)];
+          cell.shockDelay = distance / HERO_CONFIG.rippleSpeed;
+          cell.character = rippleCharacters[Math.floor(random() * rippleCharacters.length)];
           markActive(index);
         }
       }
@@ -389,18 +365,10 @@ import { HERO_CONFIG } from './config';
       const age = now - cell.burnAt;
       if (cell.burnAt < 0) {
         cell.heat *= Math.exp(-16.67 / HERO_CONFIG.heatDecayMs);
-        cell.trailAge = cell.trailAge < 0 ? -1 : cell.trailAge + 16.67;
-        if (cell.heat > 0.025 || cell.trailAge >= 0 && cell.trailAge < 680) {
-          if (cell.heat > 0.025) {
-            drawCell(index, cell.logo ? cell.character : '', cell.heat > 0.25 ? redColor() : dimColor());
-          } else if (cell.trailAge >= 0 && cell.trailAge < 680) {
-            const step = Math.min(trailRamp.length - 1, Math.floor(cell.trailAge / 110));
-            drawCell(index, trailRamp[step], textColor(), Math.max(0, 1 - cell.trailAge / 680));
-          } else {
-            drawCell(index, '', textColor());
-          }
+        if (cell.heat > 0.025) {
+          drawCell(index, cell.logo ? cell.character : '', cell.heat > 0.25 ? redColor() : textColor());
         } else {
-          drawCell(index, '', textColor());
+          drawCell(index, cell.logo ? cell.baseCharacter : '', textColor());
           removeBurned.push(index);
         }
         continue;
@@ -445,26 +413,21 @@ import { HERO_CONFIG } from './config';
     const activeNextFrame = new Set<number>();
     for (const index of activeCells) {
       const cell = cells[index];
+      if (cell.shockDelay > 0) {
+        cell.shockDelay = Math.max(0, cell.shockDelay - 16.67);
+        activeNextFrame.add(index);
+        continue;
+      }
+
       if (cell.shockAge >= 0) {
         cell.shockAge += 16.67;
-        if (cell.shockAge < 410) {
-          const opacity = 1 - cell.shockAge / 410;
+        if (cell.shockAge < HERO_CONFIG.rippleFadeMs) {
+          const opacity = 1 - cell.shockAge / HERO_CONFIG.rippleFadeMs;
           drawCell(index, cell.character, textColor(), opacity);
           activeNextFrame.add(index);
           continue;
         }
         cell.shockAge = -1;
-      }
-
-      if (cell.trailAge >= 0) {
-        cell.trailAge += 16.67;
-        if (cell.trailAge < 680) {
-          const step = Math.min(trailRamp.length - 1, Math.floor(cell.trailAge / 110));
-          drawCell(index, trailRamp[step], textColor(), 1 - cell.trailAge / 680);
-          activeNextFrame.add(index);
-          continue;
-        }
-        cell.trailAge = -1;
       }
 
       if (cell.heat > 0.025) {
@@ -477,14 +440,14 @@ import { HERO_CONFIG } from './config';
           } else if (!isHotLogo) {
             cell.character = cell.baseCharacter;
           }
-          drawCell(index, cell.logo ? cell.character : '', isHotLogo ? redColor() : dimColor());
+          drawCell(index, cell.logo ? cell.character : '', isHotLogo ? redColor() : textColor());
           activeNextFrame.add(index);
           continue;
         }
       }
 
       cell.character = cell.baseCharacter;
-      drawCell(index, cell.logo ? cell.baseCharacter : '', cell.logo ? dimColor() : textColor());
+      drawCell(index, cell.logo ? cell.baseCharacter : '', textColor());
     }
     activeCells.clear();
     for (const index of activeNextFrame) activeCells.add(index);
@@ -506,28 +469,24 @@ import { HERO_CONFIG } from './config';
       if (isOverLogo !== reducedHover) {
         reducedHover = isOverLogo;
         for (const index of logoCellIndices) {
-          drawCell(index, cells[index].baseCharacter, reducedHover ? redColor() : dimColor());
+          drawCell(index, cells[index].baseCharacter, reducedHover ? redColor() : textColor());
         }
       }
     } else {
       heatAround(x, y);
-      if (!hit?.cell.logo) stampPath(x, y);
-      else lastTrailPoint = null;
     }
   }
 
   function onPointerDown(event: PointerEvent) {
     if (event.pointerType === 'touch') {
       lastInput = performance.now();
-      lastTrailPoint = null;
     }
   }
 
   function onPointerLeave() {
-    lastTrailPoint = null;
     if (isReducedMotion && reducedHover) {
       reducedHover = false;
-      for (const index of logoCellIndices) drawCell(index, cells[index].baseCharacter, dimColor());
+      for (const index of logoCellIndices) drawCell(index, cells[index].baseCharacter, textColor());
     }
   }
 
@@ -557,7 +516,7 @@ import { HERO_CONFIG } from './config';
     context.fillStyle = backgroundColor();
     context.fillRect(0, 0, width, height);
     cells.forEach((cell, index) => {
-      if (cell.logo) drawCell(index, cell.baseCharacter, dimColor());
+      if (cell.logo) drawCell(index, cell.baseCharacter, textColor());
       if (isBurning && cell.burnAt >= 0) context.clearRect(cell.x, cell.y, cellWidth, cellHeight);
     });
     if (!isBurning) activeCells.clear();

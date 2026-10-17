@@ -85,6 +85,13 @@ button {
   transition: opacity 320ms ease-out;
 }
 
+.shop-ascii-scribble {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

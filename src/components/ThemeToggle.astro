@@ -1,21 +1,6 @@
-<button class="theme-toggle" type="button" aria-label="Switch colour theme">
+<button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
   <span data-theme-label>[ light / dark ]</span>
 </button>
-
-<script>
-  const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
-
-  toggle?.addEventListener('click', () => {
-    const root = document.documentElement;
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    try {
-      localStorage.setItem('storefront-theme', next);
-    } catch (error) {
-      console.error('Unable to save the selected colour theme.', error);
-    }
-  });
-</script>
 
 <style>
   .theme-toggle {

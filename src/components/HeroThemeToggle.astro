@@ -1,0 +1,67 @@
+<button
+  class="hero-theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="Switch colour theme"
+  title="Switch colour theme"
+>
+  <span class="pixel-moon" aria-hidden="true">
+    {Array.from({ length: 25 }, (_, index) => <span class={`pixel pixel-${index + 1}`} />)}
+  </span>
+</button>
+
+<style>
+  .hero-theme-toggle {
+    position: fixed;
+    z-index: 11;
+    top: var(--page-gutter);
+    left: var(--page-gutter);
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: var(--hairline) solid var(--color-border);
+    color: var(--color-text);
+    cursor: pointer;
+    background: var(--color-background);
+  }
+
+  .hero-theme-toggle:hover,
+  .hero-theme-toggle:focus-visible {
+    border-color: var(--color-red);
+    color: var(--color-red);
+    outline: none;
+  }
+
+  .pixel-moon {
+    display: grid;
+    grid-template-columns: repeat(5, 3px);
+    grid-template-rows: repeat(5, 3px);
+    gap: 1px;
+  }
+
+  .pixel {
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+  }
+
+  .pixel-1,
+  .pixel-2,
+  .pixel-5,
+  .pixel-6,
+  .pixel-10,
+  .pixel-15,
+  .pixel-21,
+  .pixel-25 {
+    visibility: hidden;
+  }
+
+  .pixel-4,
+  .pixel-9,
+  .pixel-14,
+  .pixel-19,
+  .pixel-24 {
+    visibility: hidden;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Storefront from '../components/Storefront.astro';
+import HeroThemeToggle from '../components/HeroThemeToggle.astro';
 import { BRAND_NAME } from '../config';
 import HeroCanvas from '../hero/HeroCanvas.astro';
 ---
@@ -11,4 +12,5 @@ import HeroCanvas from '../hero/HeroCanvas.astro';
   </div>
   <h1 class="visually-hidden">{BRAND_NAME}</h1>
   <HeroCanvas />
+  <HeroThemeToggle />
 </BaseLayout>

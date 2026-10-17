@@ -28,6 +28,22 @@ const { title = BRAND_NAME, description = `${BRAND_NAME} — clothing and object
       } catch (error) {
         console.error('Unable to restore the saved colour theme.', error);
       }
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element) || !target.closest('[data-theme-toggle]')) return;
+
+        const root = document.documentElement;
+        const current = root.dataset.theme
+          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('storefront-theme', next);
+        } catch (error) {
+          console.error('Unable to save the selected colour theme.', error);
+        }
+      });
     </script>
   </head>
   <body class:list={[heroLocked && 'hero-locked']}>
