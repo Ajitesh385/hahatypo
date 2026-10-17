@@ -1,0 +1,106 @@
+[
+  {
+    "id": "clothing-001",
+    "handle": "form-01-tee",
+    "title": "FORM 01 TEE",
+    "description": "HEAVYWEIGHT COTTON / BLACK",
+    "price": { "amount": "68.00", "currencyCode": "USD" },
+    "productType": "Clothing",
+    "images": {
+      "primary": "/images/form-01-tee-front.svg",
+      "alt": "/images/form-01-tee-back.svg",
+      "altText": "Black heavyweight cotton tee, front and back"
+    }
+  },
+  {
+    "id": "clothing-002",
+    "handle": "utility-overshirt",
+    "title": "UTILITY OVERSHIRT",
+    "description": "ORGANIC COTTON / STONE",
+    "price": { "amount": "148.00", "currencyCode": "USD" },
+    "productType": "Clothing",
+    "images": {
+      "primary": "/images/utility-overshirt-front.svg",
+      "alt": "/images/utility-overshirt-back.svg",
+      "altText": "Stone utility overshirt, front and back"
+    }
+  },
+  {
+    "id": "clothing-003",
+    "handle": "wide-leg-trouser",
+    "title": "WIDE LEG TROUSER",
+    "description": "RECYCLED TWILL / CHARCOAL",
+    "price": { "amount": "128.00", "currencyCode": "USD" },
+    "productType": "Clothing",
+    "images": {
+      "primary": "/images/wide-leg-trouser-front.svg",
+      "alt": "/images/wide-leg-trouser-back.svg",
+      "altText": "Charcoal wide leg trousers, front and back"
+    }
+  },
+  {
+    "id": "clothing-004",
+    "handle": "standard-hood",
+    "title": "STANDARD HOOD",
+    "description": "BRUSHED FLEECE / ASH",
+    "price": { "amount": "112.00", "currencyCode": "USD" },
+    "productType": "Clothing",
+    "images": {
+      "primary": "/images/standard-hood-front.svg",
+      "alt": "/images/standard-hood-back.svg",
+      "altText": "Ash brushed fleece hooded sweatshirt, front and back"
+    }
+  },
+  {
+    "id": "accessory-001",
+    "handle": "everyday-cap",
+    "title": "EVERYDAY CAP",
+    "description": "COTTON CANVAS / BLACK",
+    "price": { "amount": "42.00", "currencyCode": "USD" },
+    "productType": "Accessories",
+    "images": {
+      "primary": "/images/everyday-cap-front.svg",
+      "alt": "/images/everyday-cap-side.svg",
+      "altText": "Black cotton canvas cap, front and side"
+    }
+  },
+  {
+    "id": "accessory-002",
+    "handle": "carryall-tote",
+    "title": "CARRYALL TOTE",
+    "description": "RECYCLED CANVAS / NATURAL",
+    "price": { "amount": "54.00", "currencyCode": "USD" },
+    "productType": "Accessories",
+    "images": {
+      "primary": "/images/carryall-tote-front.svg",
+      "alt": "/images/carryall-tote-side.svg",
+      "altText": "Natural recycled canvas carryall tote, front and side"
+    }
+  },
+  {
+    "id": "accessory-003",
+    "handle": "rib-knit-sock",
+    "title": "RIB KNIT SOCK",
+    "description": "ORGANIC COTTON / ECRU",
+    "price": { "amount": "18.00", "currencyCode": "USD" },
+    "productType": "Accessories",
+    "images": {
+      "primary": "/images/rib-knit-sock-pair.svg",
+      "alt": "/images/rib-knit-sock-detail.svg",
+      "altText": "Ecru organic cotton rib knit socks"
+    }
+  },
+  {
+    "id": "accessory-004",
+    "handle": "metal-keyring",
+    "title": "METAL KEYRING",
+    "description": "BRUSHED STEEL / 32 MM",
+    "price": { "amount": "24.00", "currencyCode": "USD" },
+    "productType": "Accessories",
+    "images": {
+      "primary": "/images/metal-keyring-front.svg",
+      "alt": "/images/metal-keyring-detail.svg",
+      "altText": "Brushed steel circular metal keyring"
+    }
+  }
+]

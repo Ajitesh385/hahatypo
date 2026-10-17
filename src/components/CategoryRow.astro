@@ -1,0 +1,83 @@
+---
+const categories = [
+  { name: 'Clothing', image: '/images/category-clothing.svg' },
+  { name: 'Accessories', image: '/images/category-accessories.svg' },
+  { name: 'Vault', image: '/images/category-vault.svg' },
+];
+---
+
+<nav class="category-row" aria-label="Shop categories">
+  {categories.map(({ name, image }) => (
+    <a class="category-tile" href={`#${name.toLowerCase()}`}>
+      <span class="category-image"><img src={image} alt="" width="600" height="750" /></span>
+      <span class="category-label">{name}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .category-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-block: clamp(28px, 5vw, 72px) clamp(70px, 10vw, 132px);
+  }
+
+  .category-tile {
+    min-width: 0;
+    border: var(--hairline) solid var(--color-border);
+    transition: border-color var(--duration-quick) ease;
+  }
+
+  .category-image {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: var(--card-aspect-ratio);
+    background: var(--color-placeholder);
+  }
+
+  .category-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .category-label {
+    display: block;
+    padding: 12px 14px;
+    transition: color var(--duration-quick) ease;
+  }
+
+  .category-tile:hover,
+  .category-tile:focus-visible {
+    border-color: var(--color-red);
+    outline: none;
+  }
+
+  .category-tile:hover .category-label,
+  .category-tile:focus-visible .category-label {
+    color: var(--color-red);
+  }
+
+  @media (max-width: 600px) {
+    .category-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 64px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+    }
+
+    .category-tile {
+      flex: 0 0 min(78vw, 280px);
+      scroll-snap-align: start;
+    }
+
+    .category-label {
+      padding: 9px 8px;
+      font-size: 10px;
+    }
+  }
+</style>

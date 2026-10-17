@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Storefront from '../components/Storefront.astro';
+import { BRAND_NAME } from '../config';
+import HeroCanvas from '../hero/HeroCanvas.astro';
+---
+
+<BaseLayout title={BRAND_NAME} heroLocked>
+  <div class="store-underlay" aria-hidden="true" inert>
+    <Storefront />
+  </div>
+  <h1 class="visually-hidden">{BRAND_NAME}</h1>
+  <HeroCanvas />
+</BaseLayout>
