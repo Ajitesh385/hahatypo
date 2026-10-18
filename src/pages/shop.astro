@@ -1,11 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Storefront from '../components/Storefront.astro';
-import { BRAND_NAME } from '../config';
+import Base from '../layouts/Base.astro';
+import Shop from '../components/Shop.astro';
+import { BRAND } from '../config';
 ---
-
-<BaseLayout title={`Shop — ${BRAND_NAME}`}>
-  <div class="store-underlay">
-    <Storefront />
-  </div>
-</BaseLayout>
+<Base title={`Shop — ${BRAND}`}>
+  <h1 class="sr-only">{BRAND} shop</h1>
+  <Shop />
+</Base>

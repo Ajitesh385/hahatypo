@@ -1,16 +1,17 @@
 {
-  "name": "brandname-storefront",
+  "name": "brandname-site",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
+    "placeholders": "node scripts/gen-placeholders.mjs",
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check"
+    "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "astro": "^7.4.0",
-    "typescript": "^5.7.3"
-  }
+    "@fontsource/jetbrains-mono": "^5.1.0",
+    "astro": "^5.0.0"
+  },
+  "devDependencies": { "typescript": "^5.6.0" }
 }

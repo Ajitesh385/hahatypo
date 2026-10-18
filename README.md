@@ -1,42 +1,16 @@
-# hahatypo storefront
+# BRANDNAME
 
-A static Astro storefront with a dependency-free Canvas 2D ASCII landing experience.
-Product content is stored in a Shopify-shaped JSON file so its source can be
-replaced later without changing the card interface.
+Astro (static) + TypeScript, vanilla Canvas 2D hero, plain CSS.
 
-## Requirements
+    npm install
+    npm run placeholders   # (re)generate grey placeholder SVGs in public/img
+    npm run dev            # http://localhost:4321
+    npm run build          # static output in dist/
+    npm run preview
 
-- Node.js 22.22 or newer
-- npm
-
-## Setup
-
-```sh
-npm install
-npm run dev
-```
-
-Open the local URL printed by Astro. `/` shows the interactive ASCII hero,
-`/shop` opens the store directly, and `/about` introduces the brand's philosophy.
-The shop includes a discreet About link below the product sections.
-
-## Build and preview
-
-```sh
-npm run check
-npm run build
-npm run preview
-```
-
-The static site is emitted into `dist/`.
-
-## Structure
-
-- `src/config.ts` — the single brand-name constant.
-- `src/hero/` — Canvas 2D hero, ASCII interaction, and burn-to-store transition.
-- `src/components/` — shared header, category navigation, and product cards.
-- `src/pages/about.astro` — the brand philosophy page.
-- `src/data/products.json` — Shopify Storefront API-compatible product fields.
-- `src/styles/tokens.css` — theme colors, typography, and layout tokens.
-- `public/fonts/` — self-hosted Latin-subset IBM Plex Mono webfonts.
-- `public/images/` — generated neutral-grey 4:5 SVG placeholders.
+- Brand name and all tunables: `src/config.ts` (CSS-side tunables: `src/styles/tokens.css`)
+- Hero engine + burn: `src/hero/` · Components: `src/components/` · Data: `src/data/products.json`
+- Product photos in `public/img/` are illustrative Unsplash stock images, bundled locally under the Unsplash License. They are not photos of actual inventory; replace them with owned product photography before presenting them as exact items for sale.
+- Product detail pages are generated at `/products/<handle>` from `src/data/products.json`. Hovering text shows a small animated ASCII cursor; it is disabled for touch and reduced-motion preferences.
+- Swap `products.json` for Shopify Storefront API nodes later; the shape (handle, title, price, images[]) already matches.
+- Serve with `/shop` resolving to `shop/index.html` (default on most static hosts).
