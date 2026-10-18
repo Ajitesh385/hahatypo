@@ -1,16 +1,23 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Storefront from '../components/Storefront.astro';
-import HeroThemeToggle from '../components/HeroThemeToggle.astro';
-import { BRAND_NAME } from '../config';
-import HeroCanvas from '../hero/HeroCanvas.astro';
+import Base from '../layouts/Base.astro';
+import Shop from '../components/Shop.astro';
+import { BRAND } from '../config';
 ---
-
-<BaseLayout title={BRAND_NAME} heroLocked>
-  <div class="store-underlay" aria-hidden="true" inert>
-    <Storefront />
-  </div>
-  <h1 class="visually-hidden">{BRAND_NAME}</h1>
-  <HeroCanvas />
-  <HeroThemeToggle />
-</BaseLayout>
+<Base hero>
+  <h1 class="sr-only">{BRAND}</h1>
+  <div id="store" inert aria-hidden="true"><Shop /></div>
+  <canvas id="hero" aria-hidden="true"></canvas>
+  <script>
+    import { initHero } from '../hero/engine';
+    const store = document.getElementById('store')!;
+    const canvas = document.getElementById('hero') as HTMLCanvasElement;
+    const start = () =>
+      initHero(canvas, () => {
+        document.documentElement.classList.remove('hero');
+        store.removeAttribute('inert');
+        store.removeAttribute('aria-hidden');
+      });
+    Promise.all([document.fonts.load('400 16px "JetBrains Mono"'), document.fonts.load('700 16px "JetBrains Mono"')]).then(start, start);
+    addEventListener('popstate', () => location.reload()); // back => fresh hero
+  </script>
+</Base>

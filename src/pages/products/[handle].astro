@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductDetail from '../../components/ProductDetail.astro';
+import { products } from '../../data/catalog';
+import { BRAND } from '../../config';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { handle: product.handle },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+---
+<Base title={`${product.title} — ${BRAND}`}>
+  <ProductDetail product={product} />
+</Base>

@@ -1,0 +1,18 @@
+---
+import Header from './Header.astro';
+import CategoryRow from './CategoryRow.astro';
+import ProductGrid from './ProductGrid.astro';
+import { products } from '../data/catalog';
+---
+<Header />
+<main>
+  <CategoryRow />
+  <section aria-labelledby="new">
+    <h2 id="new">New Releases</h2>
+    <h3 id="new-clothing">Clothing</h3>
+    <ProductGrid products={products.filter((p) => p.collection === 'clothing')} />
+    <h3 id="new-accessories">Accessories</h3>
+    <ProductGrid products={products.filter((p) => p.collection === 'accessories')} />
+  </section>
+</main>
+<script>import '../scripts/cards';</script>

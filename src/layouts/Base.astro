@@ -1,0 +1,32 @@
+---
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import fontUrl from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import { BRAND } from '../config';
+const { title = BRAND, hero = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en" class={hero ? 'hero' : ''}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={`${BRAND} — clothing and accessories.`} />
+    <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>import '../scripts/ascii-hover';</script>
+  </body>
+</html>
